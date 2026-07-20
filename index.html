@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LogCut Pro — Precision cut plans for the mill floor</title>
+<meta name="description" content="LogCut Pro turns a log's diameter into an exact, kerf-accurate cutting guide — every saw position, every board width, right on the mill floor, no signal required." />
+<link rel="icon" href="assets/favicon.png" />
+<style>
+  :root {
+    --bg: #14110E;
+    --surface: #221D18;
+    --surface-alt: #2C251E;
+    --border: #3A3127;
+    --text: #F5EEE4;
+    --text-dim: #A99C8A;
+    --accent: #E8A13A;
+    --accent-text: #1A140C;
+    --cut: #E8622A;
+    --dim-green: #85B56D;
+    --danger: #D9534F;
+    --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  html, body { overflow-x: hidden; max-width: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-ui);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+  /* ---- Nav ---- */
+  header.nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(20, 17, 14, 0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 14px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; letter-spacing: -0.01em; }
+  .brand img { width: 30px; height: 30px; border-radius: 8px; }
+  nav.links { display: flex; align-items: center; gap: 22px; order: 3; width: 100%; justify-content: center; }
+  @media (min-width: 620px) {
+    nav.links { width: auto; order: 0; }
+  }
+  nav.links a {
+    text-decoration: none;
+    color: var(--text-dim);
+    font-size: 14.5px;
+    font-weight: 600;
+  }
+  nav.links a:hover { color: var(--text); }
+  .lang-toggle {
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .lang-toggle button {
+    background: var(--surface);
+    color: var(--text-dim);
+    border: none;
+    padding: 6px 11px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+  }
+  .lang-toggle button.active { background: var(--accent); color: var(--accent-text); }
+
+  /* ---- Hero ---- */
+  .hero { padding: 64px 0 40px; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--cut);
+    margin: 0 0 14px;
+    font-weight: 700;
+  }
+  h1 {
+    font-size: clamp(30px, 4.6vw, 46px);
+    line-height: 1.12;
+    margin: 0 0 18px;
+    letter-spacing: -0.02em;
+    max-width: 18ch;
+  }
+  .lede { color: var(--text-dim); font-size: 17px; max-width: 58ch; margin: 0 0 30px; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 8px; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 22px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 15px;
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+  }
+  .btn-primary { background: var(--accent); color: var(--accent-text); }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-ghost { background: transparent; border-color: var(--border); color: var(--text); }
+  .btn-ghost:hover { border-color: var(--text-dim); }
+
+  .hero-shot {
+    margin-top: 46px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+  }
+  .hero-shot img { border-radius: 10px; }
+  .hero-caption {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--text-dim);
+    margin-top: 14px;
+    text-align: center;
+  }
+
+  /* ---- Sections ---- */
+  section { padding: 64px 0; border-top: 1px solid var(--border); }
+  .section-head { max-width: 60ch; margin-bottom: 40px; }
+  h2 { font-size: clamp(24px, 3vw, 32px); margin: 0 0 12px; letter-spacing: -0.01em; }
+  .section-lede { color: var(--text-dim); font-size: 16px; margin: 0; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+  }
+  .card .icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-bottom: 14px;
+  }
+  .card h3 { font-size: 16.5px; margin: 0 0 8px; }
+  .card p { color: var(--text-dim); font-size: 14.5px; margin: 0; }
+
+  /* ---- How it works ---- */
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 22px; counter-reset: step; }
+  .step { position: relative; padding-left: 46px; }
+  .step .num {
+    position: absolute;
+    left: 0; top: 0;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    color: var(--cut);
+    font-weight: 800;
+    font-family: var(--font-mono);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .step h3 { font-size: 15.5px; margin: 0 0 6px; }
+  .step p { color: var(--text-dim); font-size: 14px; margin: 0; }
+
+  /* ---- Stat strip ---- */
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px;
+  }
+  .stat { text-align: center; }
+  .stat .n { font-size: 30px; font-weight: 800; color: var(--dim-green); font-family: var(--font-mono); }
+  .stat .l { font-size: 12.5px; color: var(--text-dim); margin-top: 4px; }
+
+  /* ---- Access ---- */
+  .access {
+    background: linear-gradient(180deg, var(--surface) 0%, var(--surface-alt) 100%);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 48px 36px;
+    text-align: center;
+  }
+  .access h2 { margin-bottom: 10px; }
+  .access p { color: var(--text-dim); max-width: 52ch; margin: 0 auto 26px; }
+  .badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(232, 161, 58, 0.1);
+    border: 1px solid rgba(232, 161, 58, 0.3);
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 18px;
+  }
+
+  footer { padding: 34px 0 50px; }
+  .foot-inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 14px;
+    color: var(--text-dim);
+    font-size: 13.5px;
+  }
+  .foot-inner a { text-decoration: underline; text-underline-offset: 3px; }
+
+  .lang-hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand"><img src="assets/icon.png" alt="LogCut Pro" />LogCut Pro</div>
+    <nav class="links">
+      <a href="#features" data-i18n-en>Features</a>
+      <a href="#features" data-i18n-es>Funciones</a>
+      <a href="#how" data-i18n-en>How it works</a>
+      <a href="#how" data-i18n-es>Cómo funciona</a>
+      <a href="#access" data-i18n-en>Contact</a>
+      <a href="#access" data-i18n-es>Contacto</a>
+    </nav>
+    <div class="lang-toggle">
+      <button id="btn-en" class="active">EN</button>
+      <button id="btn-es">ES</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero" style="border-top:none;">
+    <p class="eyebrow" data-i18n-en>Precision sawmill cut plans</p>
+    <p class="eyebrow" data-i18n-es>Planes de corte precisos para aserraderos</p>
+
+    <h1 data-i18n-en>Know exactly where every cut lands — before the saw touches the log.</h1>
+    <h1 data-i18n-es>Sabe exactamente dónde entra cada corte — antes de que la sierra toque la troza.</h1>
+
+    <p class="lede" data-i18n-en>LogCut Pro turns a log's diameter into an exact, kerf-accurate cutting guide: every saw position, every board width, every offcut accounted for — right on the mill floor, no signal required.</p>
+    <p class="lede" data-i18n-es>LogCut Pro convierte el diámetro de una troza en una guía de corte exacta, con el kerf ya descontado: cada posición de sierra, cada ancho de tabla, cada sobrante ya calculado — directo en el piso del aserradero, sin necesidad de señal.</p>
+
+    <div class="cta-row">
+      <a class="btn btn-primary" href="mailto:hello@logcutpro.com?subject=LogCut%20Pro%20-%20Early%20access" data-i18n-en>Request early access</a>
+      <a class="btn btn-primary" href="mailto:hello@logcutpro.com?subject=LogCut%20Pro%20-%20Acceso%20anticipado" data-i18n-es>Solicitar acceso anticipado</a>
+      <a class="btn btn-ghost" href="#how" data-i18n-en>See how it works</a>
+      <a class="btn btn-ghost" href="#how" data-i18n-es>Ver cómo funciona</a>
+    </div>
+
+    <div class="hero-shot">
+      <img src="assets/hero-diagram.png" alt="Real cutting guide generated by the LogCut Pro engine for a 14 inch log" />
+      <p class="hero-caption" data-i18n-en>Actual output from the LogCut Pro engine — 14&Prime; log, 1&Prime; boards, 3/32&Prime; kerf, 8&Prime; target width.</p>
+      <p class="hero-caption" data-i18n-es>Resultado real del motor de LogCut Pro — troza de 14&Prime;, tablas de 1&Prime;, kerf de 3/32&Prime;, ancho objetivo de 8&Prime;.</p>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="section-head">
+      <h2 data-i18n-en>Built around the way a mill actually cuts</h2>
+      <h2 data-i18n-es>Pensada para cómo se corta de verdad en el aserradero</h2>
+      <p class="section-lede" data-i18n-en>Not a generic board-footage calculator — a guide built on the real four-step process: square, flip, rotate, fill.</p>
+      <p class="section-lede" data-i18n-es>No es una calculadora genérica de pie-tabla — es una guía basada en el proceso real de cuatro pasos: escuadrar, voltear, rotar y rellenar.</p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="icon">📏</div>
+        <h3 data-i18n-en>Kerf-accurate cut ladders</h3>
+        <h3 data-i18n-es>Escalera de cortes exacta con kerf</h3>
+        <p data-i18n-en>Every guide mark is an absolute saw position — not a running tally you have to add up in your head between cuts.</p>
+        <p data-i18n-es>Cada marca de la guía es una posición absoluta de la sierra — no una suma que tengas que llevar en la cabeza entre corte y corte.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🧩</div>
+        <h3 data-i18n-en>Best combination of widths</h3>
+        <h3 data-i18n-es>Mejor combinación de anchos</h3>
+        <p data-i18n-en>An exact solver — not a guess — finds the mix of standard board widths that uses the most of every slab.</p>
+        <p data-i18n-es>Un solucionador exacto — no una aproximación — encuentra la combinación de anchos estándar que mejor aprovecha cada cachete.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🪵</div>
+        <h3 data-i18n-en>Nothing above the line wasted</h3>
+        <h3 data-i18n-es>Nada se desperdicia arriba de la línea</h3>
+        <p data-i18n-en>Leftover cant above the last board is automatically filled with more boards, continuing the same guide.</p>
+        <p data-i18n-es>El sobrante del canto arriba de la última tabla se rellena solo con más tablas, siguiendo la misma guía.</p>
+      </div>
+      <div class="card">
+        <div class="icon">⚖️</div>
+        <h3 data-i18n-en>Compare widths side by side</h3>
+        <h3 data-i18n-es>Compara anchos uno junto a otro</h3>
+        <p data-i18n-en>See the yield for every candidate target width and pick the one that fits the log — the app never picks for you.</p>
+        <p data-i18n-es>Ve el rendimiento de cada ancho objetivo candidato y elige el que mejor le quede a la troza — la app nunca decide por ti.</p>
+      </div>
+      <div class="card">
+        <div class="icon">📐</div>
+        <h3 data-i18n-en>Inches or millimeters</h3>
+        <h3 data-i18n-es>Pulgadas o milímetros</h3>
+        <p data-i18n-en>Fractions down to 1/32&Prime;, or exact millimeters — same engine, your choice of units.</p>
+        <p data-i18n-es>Fracciones hasta 1/32&Prime;, o milímetros exactos — mismo motor, tú eliges la unidad.</p>
+      </div>
+      <div class="card">
+        <div class="icon">📶</div>
+        <h3 data-i18n-en>Works with no signal</h3>
+        <h3 data-i18n-es>Funciona sin señal</h3>
+        <p data-i18n-en>100% offline. No accounts, no cloud, no waiting on bars in the mill yard.</p>
+        <p data-i18n-es>100% sin conexión. Sin cuentas, sin nube, sin esperar señal en el patio del aserradero.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="section-head">
+      <h2 data-i18n-en>How the plan is built</h2>
+      <h2 data-i18n-es>Cómo se arma el plan</h2>
+      <p class="section-lede" data-i18n-en>Four steps, two axes — the same sequence a mill operator already follows by hand.</p>
+      <p class="section-lede" data-i18n-es>Cuatro pasos, dos ejes — la misma secuencia que un operario ya sigue a mano.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <h3 data-i18n-en>Square two sides</h3>
+        <h3 data-i18n-es>Escuadrar dos lados</h3>
+        <p data-i18n-en>Slab both faces down to your target width, flipping the log between cuts.</p>
+        <p data-i18n-es>Se sacan los cachetes de ambos lados hasta el ancho objetivo, volteando la troza entre corte y corte.</p>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <h3 data-i18n-en>Rotate 90°</h3>
+        <h3 data-i18n-es>Rotar 90°</h3>
+        <p data-i18n-en>Trim the remaining rounded faces down to a squared cant.</p>
+        <p data-i18n-es>Se quita la cáscara de las caras redondeadas restantes hasta dejar un canto cuadrado.</p>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <h3 data-i18n-en>Cut the center</h3>
+        <h3 data-i18n-es>Cortar el centro</h3>
+        <p data-i18n-en>Take boards — or resaw stock — from the squared cant at your chosen thickness.</p>
+        <p data-i18n-es>Se sacan las tablas — o material para reaserradora — del canto cuadrado, en el grosor elegido.</p>
+      </div>
+      <div class="step">
+        <div class="num">4</div>
+        <h3 data-i18n-en>Fill the leftover</h3>
+        <h3 data-i18n-es>Rellenar el sobrante</h3>
+        <p data-i18n-en>Any cant left above the last board is sliced into more boards automatically.</p>
+        <p data-i18n-es>Lo que sobra del canto arriba de la última tabla se corta en más tablas de forma automática.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="stats" style="padding-top:0;">
+    <div class="stat-strip">
+      <div class="stat"><div class="n">12</div><div class="l" data-i18n-en>boards from one log</div><div class="l" data-i18n-es>tablas de una sola troza</div></div>
+      <div class="stat"><div class="n">1/32&Prime;</div><div class="l" data-i18n-en>guide precision</div><div class="l" data-i18n-es>precisión de guía</div></div>
+      <div class="stat"><div class="n">0</div><div class="l" data-i18n-en>signal required</div><div class="l" data-i18n-es>señal requerida</div></div>
+      <div class="stat"><div class="n">2</div><div class="l" data-i18n-en>languages, ES / EN</div><div class="l" data-i18n-es>idiomas, ES / EN</div></div>
+    </div>
+  </section>
+
+  <section id="access">
+    <div class="access">
+      <span class="badge" data-i18n-en>Field-testing now</span>
+      <span class="badge" data-i18n-es>En pruebas de campo</span>
+      <h2 data-i18n-en>Currently testing with real sawmill operators</h2>
+      <h2 data-i18n-es>Actualmente en pruebas con operarios reales de aserradero</h2>
+      <p data-i18n-en>LogCut Pro isn't in an app store yet — it's being shaped directly by feedback from the mill floor. If you run a sawmill and want early access, reach out.</p>
+      <p data-i18n-es>LogCut Pro todavía no está en una tienda de apps — se está afinando directamente con la retroalimentación del piso del aserradero. Si operas un aserradero y quieres acceso anticipado, escríbenos.</p>
+      <div class="cta-row" style="justify-content:center;">
+        <a class="btn btn-primary" href="mailto:hello@logcutpro.com?subject=LogCut%20Pro%20-%20Early%20access" data-i18n-en>Email hello@logcutpro.com</a>
+        <a class="btn btn-primary" href="mailto:hello@logcutpro.com?subject=LogCut%20Pro%20-%20Acceso%20anticipado" data-i18n-es>Escribe a hello@logcutpro.com</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <div class="foot-inner">
+    <span>&copy; <span id="year"></span> LogCut Pro</span>
+    <span data-i18n-en>logcutpro.com — built for the mill floor.</span>
+    <span data-i18n-es>logcutpro.com — hecha para el piso del aserradero.</span>
+  </div>
+</footer>
+
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  var enBtn = document.getElementById("btn-en");
+  var esBtn = document.getElementById("btn-es");
+
+  function setLang(lang) {
+    document.documentElement.setAttribute("data-lang", lang);
+    document.documentElement.setAttribute("lang", lang);
+    enBtn.classList.toggle("active", lang === "en");
+    esBtn.classList.toggle("active", lang === "es");
+    document.querySelectorAll("[data-i18n-en]").forEach(function (el) {
+      el.classList.toggle("lang-hidden", lang !== "en");
+    });
+    document.querySelectorAll("[data-i18n-es]").forEach(function (el) {
+      el.classList.toggle("lang-hidden", lang !== "es");
+    });
+    try { localStorage.setItem("logcutpro-lang", lang); } catch (e) {}
+  }
+
+  enBtn.addEventListener("click", function () { setLang("en"); });
+  esBtn.addEventListener("click", function () { setLang("es"); });
+
+  var saved = null;
+  try { saved = localStorage.getItem("logcutpro-lang"); } catch (e) {}
+  setLang(saved === "es" ? "es" : "en");
+</script>
+
+</body>
+</html>
